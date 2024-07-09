@@ -75,7 +75,7 @@
 				"enable": false,
 				"engine": "google_pse",
 				"searxng_query_url": "",
-				"google_pse_api_key": "AIzaSyCe6pCSNCu0pUI44qufUu-Sw0oevsMOsxA",
+				"google_pse_api_key": "",
 				"google_pse_engine_id": "85cf5e844ff5e43e8",
 				"brave_search_api_key": "",
 				"serpstack_api_key": "",
