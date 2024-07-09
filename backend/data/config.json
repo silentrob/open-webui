@@ -133,7 +133,7 @@
 		"tts": {
 			"openai": {
 				"api_base_url": "https://api.openai.com/v1",
-				"api_key": "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"
+				"api_key": ""
 			},
 			"engine": "",
 			"model": "tts-1",
@@ -142,7 +142,7 @@
 		"stt": {
 			"openai": {
 				"api_base_url": "https://api.openai.com/v1",
-				"api_key": "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"
+				"api_key": ""
 			},
 			"engine": "",
 			"model": "whisper-1"
