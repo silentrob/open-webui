@@ -29,7 +29,7 @@
 		showChangelog,
 		config,
 		showCallOverlay,
-		tools
+		tools,
 	} from '$lib/stores';
 
 	import SettingsModal from '$lib/components/chat/SettingsModal.svelte';
@@ -63,8 +63,6 @@
 						await deleteDB('Chats');
 					}
 				}
-
-				console.log(DB);
 			} catch (error) {
 				// IndexedDB Not Found
 			}
@@ -174,7 +172,7 @@
 		}
 
 		loaded = true;
-	});
+	});  
 </script>
 
 <SettingsModal bind:show={$showSettings} />

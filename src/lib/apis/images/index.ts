@@ -449,7 +449,8 @@ export const imageGenerations = async (token: string = '', prompt: string) => {
 			...(token && { authorization: `Bearer ${token}` })
 		},
 		body: JSON.stringify({
-			prompt: prompt
+			prompt: prompt,
+      negative_prompt: '(octane render, render, drawing, anime, bad photo, bad photography:1.3), (worst quality, low quality, blurry:1.2), (bad teeth, deformed teeth, deformed lips), (bad anatomy, bad proportions:1.1), (deformed iris, deformed pupils), (deformed eyes, bad eyes), (deformed face, ugly face, bad face), (deformed hands, bad hands, fused fingers), morbid, mutilated, mutation, disfigured, (text:1.2)'
 		})
 	})
 		.then(async (res) => {

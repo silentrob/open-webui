@@ -52,7 +52,7 @@ def dev(
     reload: bool = True,
 ):
     uvicorn.run(
-        "main:app", host=host, port=port, reload=reload, forwarded_allow_ips="*"
+        "main:app", host=host, port=port, reload=reload, forwarded_allow_ips="*", proxy_headers=True
     )
 
 

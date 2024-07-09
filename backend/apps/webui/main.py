@@ -12,6 +12,7 @@ from apps.webui.routers import (
     configs,
     memories,
     utils,
+    characters,
 )
 from config import (
     WEBUI_BUILD_HASH,
@@ -70,7 +71,7 @@ app.add_middleware(
 app.include_router(auths.router, prefix="/auths", tags=["auths"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(chats.router, prefix="/chats", tags=["chats"])
-
+app.include_router(characters.router, prefix="/characters", tags=["characters"])
 app.include_router(documents.router, prefix="/documents", tags=["documents"])
 app.include_router(tools.router, prefix="/tools", tags=["tools"])
 app.include_router(models.router, prefix="/models", tags=["models"])

@@ -203,6 +203,51 @@ export const getOllamaModels = async (token: string = '') => {
 		});
 };
 
+export const generateSDImagePrompt = async (
+	token: string = '',
+	template: string,
+	model: string,
+	prompt: string
+) => {
+	let error = null;
+
+	template = titleGenerationTemplate(template, prompt);
+
+	const res = await fetch(`${OLLAMA_API_BASE_URL}/api/generate`, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
+		},
+		body: JSON.stringify({
+			model: model,
+			prompt: template,
+			stream: false,
+			options: {
+				num_predict: 800
+			}
+		})
+	})
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
+		})
+		.catch((err) => {
+			console.log(err);
+			if ('detail' in err) {
+				error = err.detail;
+			}
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res?.response.replace(/["']/g, '') ?? 'New Chat';
+};
+
 // TODO: migrate to backend
 export const generateTitle = async (
 	token: string = '',

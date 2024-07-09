@@ -661,6 +661,7 @@
 			docs = model.info.meta.knowledge;
 		}
 
+    console.log("Full MEssage to OLLAMA", messagesBody);
 		docs = [
 			...docs,
 			...messages

@@ -1078,6 +1078,28 @@ AUDIO_TTS_VOICE = PersistentConfig(
     os.getenv("AUDIO_TTS_VOICE", "alloy"),
 )
 
+DEFAULT_RELATIONSHIP_TEMPLATE = """Use the following relationship traits with the user to aid in your final response, inside <relationship></relationship> XML tags.
+<relationship>
+    [context]
+</relationship>
+
+When responding to user:
+- The values are between 1 and 10, higher values are considered better in all axis.
+- Treat these stats as your heart and unique bond with the user. 
+- These stats may change over time, but they are a reflection of your current relationship with the user.
+- Use these stats to inform your responses to the user.
+- Continue to use your emotional traits and comminication style to respond to the user.
+Avoid mentioning that you obtained the information from the context.
+
+Given the relationship traits, answer the query.
+Query: [query]"""
+
+RELATIONSHIP_TEMPLATE = PersistentConfig(
+    "RELATIONSHIP_TEMPLATE",
+    "relationship_template",
+    os.environ.get("RELATIONSHIP_TEMPLATE", DEFAULT_RELATIONSHIP_TEMPLATE),
+)
+
 
 ####################################
 # Database

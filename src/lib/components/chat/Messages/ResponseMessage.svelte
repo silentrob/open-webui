@@ -18,6 +18,7 @@
 	import { config, models, settings } from '$lib/stores';
 	import { synthesizeOpenAISpeech } from '$lib/apis/audio';
 	import { imageGenerations } from '$lib/apis/images';
+  import { generateSDImagePrompt } from '$lib/apis/ollama';
 	import {
 		approximateToHumanReadable,
 		extractSentences,
@@ -338,12 +339,49 @@
 		renderStyling();
 	};
 
+
+const imageTemplate = `Here is the query:
+{{prompt}}
+
+You are a photogapher, convert the previous prompt to 60 to 150 tags or booru tags, comma separated, for a stable diffusion image generator.
+Put the most important tags in the first 20% of the prompt, and use parentheses to indicate the importance of the tags.
+Focus on only what can be seen, start with the subject, the style, and the mood, lighting. The type of shot, angle, composition, and the mood are all important.
+Take liberties to add to the prompt to fill in any missing gaps.
+RESPOND ONLY WITH THE PROMPT TEXT.
+
+Examples of prompts:
+Cinematic still, filmed by Alfonso Cuarn, wide-shot, a creature adorned with luminescent feathers that cascade like a vibrant waterfall, their iridescent glow casting an enchanting shimmer upon the surroundings, mythical creature had stepped into our world, exuding an aura of otherworldly beauty and intrigue
+closeup of woman wearing gothic clothes, braided pigtails, in a castle, sharp focus, looking at the night time, Mystical atmosphere, cinematic
+Victorian man, London, (sharp focus:1.2), extremely detailed, (photorealistic:1.4), (RAW image, 8k high resolution:1.2), RAW candid cinema, 16mm, color graded Portra 400 film, ultra realistic, cinematic film still, subsurface scattering, ray tracing, (volumetric lighting)
+masterpiece, best quality, gorgeous pale american cute girl, smiling, (crop top), red hair loose braided hair, short polca skirt, lean against a tree, field, flowers smiling, perfectly symmetrical face, detailed skin, elegant, alluring, attractive, amazing photograph, masterpiece, best quality, 8K, high quality, photorealistic, realism, art photography, Nikon D850, 16k, sharp focus, masterpiece, breathtaking, atmospheric perspective, diffusion, pore correlation, skin imperfections, DSLR, 80mm Sigma f2, depth of field, intricate natural lighting, looking at camara
+close-up portrait of an attractive hungarian woman, age 21, with white pale skin and long light brown hair styled in a sleek bun. she possesses a gracefully muscular body, exuding strength and confidence. smiling expression, she is dressed in a fashionable white shirt, the fabric gently fluttering in the breeze of a serene suburban park. this headshot captures her at eye level, amidst a tranquil natural setting, embodying timeless beauty and vitality
+Intricate dynamic action shot of cowboy in a shootout, cinematic Steve Henderson Fabian Perez Henry Asencio Jeremy Mann Marc Simonetti Fantasy, red dead redemption 2 atmosphere, cinematic, #photograph
+`;
+
+  const imagePromptPreProcess = async (userPrompt: string): Promise<string> => {
+
+    const sdPrompt = await generateSDImagePrompt(
+      localStorage.token,
+      imageTemplate,
+      model?.name,
+      userPrompt,
+    ).catch((error) => {
+      console.error(error);
+      return userPrompt;
+    });
+
+    return sdPrompt;
+};
+
 	const generateImage = async (message) => {
 		generatingImage = true;
-		const res = await imageGenerations(localStorage.token, message.content).catch((error) => {
+
+    const sdImagePrompt = await imagePromptPreProcess(message.content);
+    console.log(sdImagePrompt);
+		const res = await imageGenerations(localStorage.token, sdImagePrompt).catch((error) => {
 			toast.error(error);
 		});
-		console.log(res);
+
 
 		if (res) {
 			message.files = res.map((image) => ({

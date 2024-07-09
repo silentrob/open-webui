@@ -94,6 +94,7 @@ from config import (
     SEARCH_QUERY_PROMPT_LENGTH_THRESHOLD,
     TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE,
     AppConfig,
+    RELATIONSHIP_TEMPLATE,
 )
 from constants import ERROR_MESSAGES
 
@@ -101,6 +102,9 @@ logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
+from apps.persona.character import CharacterAgent
+from apps.persona.character import initialize_db
+initialize_db()
 
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
@@ -162,6 +166,8 @@ app.state.config.SEARCH_QUERY_PROMPT_LENGTH_THRESHOLD = (
 app.state.config.TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE = (
     TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE
 )
+
+app.state.config.RELATIONSHIP_TEMPLATE = RELATIONSHIP_TEMPLATE
 
 app.state.MODELS = {}
 
@@ -1464,3 +1470,64 @@ else:
     log.warning(
         f"Frontend build directory not found at '{FRONTEND_BUILD_DIR}'. Serving API only."
     )
+
+
+class PersonaMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        
+        response = await call_next(request)
+        return response
+
+        if request.method == "POST" and (
+            "/ollama/api/chat" in request.url.path
+            or "/chat/completions" in request.url.path
+        ):
+            log.debug(f"request.url.path: {request.url.path}")
+
+            # Read the original request body
+            body = await request.body()
+            # Decode body to string
+            body_str = body.decode("utf-8")
+            # Parse string to JSON
+            data = json.loads(body_str) if body_str else {}
+
+            user = get_current_user(
+                get_http_authorization_cred(request.headers.get("Authorization"))
+            )
+
+            prompt = get_last_user_message(data["messages"])
+            context = ""
+
+            if "character_id" in data:
+              characterAgent = CharacterAgent.get_character(data['character_id'])
+              rel_traits = characterAgent.get_relationship_traits(user.id)
+              # This needs to be stuffed into the context.
+              context += ("\n" if context != "" else "") + str(rel_traits)
+
+              system_prompt = rag_template(
+                  app.state.config.RELATIONSHIP_TEMPLATE, context, prompt
+              )
+
+              data["messages"] = add_or_update_system_message(
+                  f"\n{system_prompt}", data["messages"]
+              )
+            
+            modified_body_bytes = json.dumps(data).encode("utf-8")
+
+            # Replace the request body with the modified one
+            request._body = modified_body_bytes
+            # Set custom header to ensure content-length matches new body length
+            request.headers.__dict__["_list"] = [
+                (b"content-length", str(len(modified_body_bytes)).encode("utf-8")),
+                *[
+                    (k, v)
+                    for k, v in request.headers.raw
+                    if k.lower() != b"content-length"
+                ],
+            ]
+
+        response = await call_next(request)
+
+        return response
+
+app.add_middleware(PersonaMiddleware)

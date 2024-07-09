@@ -485,6 +485,26 @@ export const promptTemplate = (
 	return template;
 };
 
+export const personaPromptTemplate = (template: string, character: Character, user_name: string): string => {
+  
+  template = promptTemplate(template, user_name, 'Vancouver BC');
+  template = template.replaceAll('{{char_name}}', character.name);
+  template = template.replaceAll('{{user_name}}', user_name);
+  template = template.replace('{{emotional}}', Object.entries(character.personality.traits.emotional).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{social}}',  Object.entries(character.personality.traits.social).map(([key, value]) => `${key}: ${value}`).join(', '));
+
+  template = template.replace('{{cognitive}}',  Object.entries(character.personality.traits.cognitive).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{behavioral}}',  Object.entries(character.personality.traits.behavioral).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{physical_health}}',  Object.entries(character.personality.traits.physical_health).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{moral}}',  Object.entries(character.personality.traits.moral).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{communication}}',  Object.entries(character.personality.traits.communication).map(([key, value]) => `${key}: ${value}`).join(', '));
+  template = template.replace('{{appearance}}', Object.entries(character.appearance).map(([key, value]) => `${key}: ${value}`).join(', '));
+
+  console.log(template);
+  
+  return template;
+};
+
 /**
  * This function is used to replace placeholders in a template string with the provided prompt.
  * The placeholders can be in the following formats:

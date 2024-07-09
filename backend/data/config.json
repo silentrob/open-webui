@@ -4,33 +4,148 @@
 		"default_locale": "en-US",
 		"prompt_suggestions": [
 			{
-				"title": ["Help me study", "vocabulary for a college entrance exam"],
+				"title": [
+					"Help me study",
+					"vocabulary for a college entrance exam"
+				],
 				"content": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option."
 			},
 			{
-				"title": ["Give me ideas", "for what to do with my kids' art"],
+				"title": [
+					"Give me ideas",
+					"for what to do with my kids' art"
+				],
 				"content": "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter."
 			},
 			{
-				"title": ["Tell me a fun fact", "about the Roman Empire"],
+				"title": [
+					"Tell me a fun fact",
+					"about the Roman Empire"
+				],
 				"content": "Tell me a random fun fact about the Roman Empire"
 			},
 			{
-				"title": ["Show me a code snippet", "of a website's sticky header"],
+				"title": [
+					"Show me a code snippet",
+					"of a website's sticky header"
+				],
 				"content": "Show me a code snippet of a website's sticky header in CSS and JavaScript."
 			},
 			{
-				"title": ["Explain options trading", "if I'm familiar with buying and selling stocks"],
+				"title": [
+					"Explain options trading",
+					"if I'm familiar with buying and selling stocks"
+				],
 				"content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks."
 			},
 			{
-				"title": ["Overcome procrastination", "give me tips"],
+				"title": [
+					"Overcome procrastination",
+					"give me tips"
+				],
 				"content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?"
 			},
 			{
-				"title": ["Grammar check", "rewrite it for better readability "],
+				"title": [
+					"Grammar check",
+					"rewrite it for better readability "
+				],
 				"content": "Check the following sentence for grammar and clarity: \"[sentence]\". Rewrite it for better readability while maintaining its original meaning."
 			}
+		],
+		"default_models": "llama3:latest",
+		"user_permissions": {
+			"chat": {
+				"deletion": true
+			}
+		},
+		"banners": [],
+		"enable_signup": true,
+		"default_user_role": "user",
+		"enable_community_sharing": true
+	},
+	"rag": {
+		"pdf_extract_images": false,
+		"youtube_loader_language": [
+			"en"
+		],
+		"enable_web_loader_ssl_verification": null,
+		"web": {
+			"search": {
+				"enable": false,
+				"engine": "google_pse",
+				"searxng_query_url": "",
+				"google_pse_api_key": "AIzaSyCe6pCSNCu0pUI44qufUu-Sw0oevsMOsxA",
+				"google_pse_engine_id": "85cf5e844ff5e43e8",
+				"brave_search_api_key": "",
+				"serpstack_api_key": "",
+				"serpstack_https": true,
+				"serper_api_key": "",
+				"serply_api_key": "",
+				"result_count": 3,
+				"concurrent_requests": 10
+			}
+		},
+		"template": "Use the following context as your learned knowledge, inside <context></context> XML tags.\n<context>\n    [context]\n</context>\n\nWhen answer to user:\n- If you don't know, just say that you don't know.\n- If you don't know when you are not sure, ask for clarification.\nAvoid mentioning that you obtained the information from the context.\nAnd answer according to the language of the user's question.\n\nGiven the context information, answer the query.\nQuery: [query]",
+		"top_k": 5,
+		"relevance_threshold": 0.0,
+		"enable_hybrid_search": false
+	},
+	"model_filter": {
+		"enable": false,
+		"list": [
+			""
 		]
+	},
+	"task": {
+		"model": {
+			"default": "llama3:latest",
+			"external": "llama3:latest"
+		},
+		"title": {
+			"prompt_template": "Here is the query:\n{{prompt:middletruncate:8000}}\n\nCreate a concise, 3-5 word phrase with an emoji as a title for the previous query. Suitable Emojis for the summary can be used to enhance understanding but avoid quotation marks or special formatting. RESPOND ONLY WITH THE TITLE TEXT.\n\nExamples of titles:\n\ud83d\udcc9 Stock Market Trends\n\ud83c\udf6a Perfect Chocolate Chip Recipe\nEvolution of Music Streaming\nRemote Work Productivity Tips\nArtificial Intelligence in Healthcare\n\ud83c\udfae Video Game Development Insights"
+		},
+		"search": {
+			"prompt_template": "You are tasked with generating web search queries. Give me an appropriate query to answer my question for google search. Answer with only the query. Today is {{CURRENT_DATE}}.\n        \nQuestion:\n{{prompt:end:4000}}",
+			"prompt_length_threshold": 100
+		},
+		"tools": {
+			"prompt_template": "Tools: {{TOOLS}}\nIf a function tool doesn't match the query, return an empty string. Else, pick a function tool, fill in the parameters from the function tool's schema, and return it in the format { \"name\": \"functionName\", \"parameters\": { \"key\": \"value\" } }. Only pick a function if the user asks.  Only return the object. Do not return any other text."
+		}
+	},
+	"webhook_url": "",
+	"auth": {
+		"admin": {
+			"show": true
+		},
+		"jwt_expiry": "-1"
+	},
+	"image_generation": {
+		"engine": "",
+		"enable": true,
+		"automatic1111": {
+			"base_url": "http://192.168.0.3:8111"
+		},
+		"size": "1024x1344",
+		"steps": 45
+	},
+	"audio": {
+		"tts": {
+			"openai": {
+				"api_base_url": "https://api.openai.com/v1",
+				"api_key": "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"
+			},
+			"engine": "",
+			"model": "tts-1",
+			"voice": "Samantha"
+		},
+		"stt": {
+			"openai": {
+				"api_base_url": "https://api.openai.com/v1",
+				"api_key": "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"
+			},
+			"engine": "",
+			"model": "whisper-1"
+		}
 	}
 }

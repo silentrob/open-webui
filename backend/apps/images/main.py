@@ -488,6 +488,15 @@ def generate_image(
                 "batch_size": form_data.n,
                 "width": width,
                 "height": height,
+                "alwayson_scripts": {
+                "ADetailer": {
+                  "args": [
+                    {
+                      "ad_model": "face_yolov8n.pt"
+                    }
+                  ]
+                }
+              },
             }
 
             if app.state.config.IMAGE_STEPS is not None:
